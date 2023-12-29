@@ -1,0 +1,13 @@
+diff --git a/cmake/external/onnx-tensorrt/third_party/onnx/third_party/pybind11/tools/pybind11Config.cmake.in b/cmake/external/onnx-tensorrt/third_party/onnx/third_party/pybind11/tools/pybind11Config.cmake.in
+index 8a7272f..8d52d32 100644
+--- a/cmake/external/onnx-tensorrt/third_party/onnx/third_party/pybind11/tools/pybind11Config.cmake.in
++++ b/cmake/external/onnx-tensorrt/third_party/onnx/third_party/pybind11/tools/pybind11Config.cmake.in
+@@ -28,7 +28,7 @@
+ #
+ # Python headers, libraries (as needed by platform), and the C++ standard
+ # are attached to the target. Set PythonLibsNew variables to influence
+-# python detection and PYBIND11_CPP_STANDARD (-std=c++11 or -std=c++14) to
++# python detection and PYBIND11_CPP_STANDARD (-std=gnu++11 or -std=gnu++14) to
+ # influence standard setting. ::
+ #
+ #   find_package(pybind11 CONFIG REQUIRED)
