@@ -3,11 +3,10 @@
 ###############################################################################
 #   user configurations
 
-_CFG_build_target="qnx710-aarch64le" # possible values: qnx700-aarch64le, qnx710-aarch64le
+_CFG_build_target="1.14.1-qnx710-aarch64le" # possible values: 1.8.2-qnx700-aarch64le, 1.14.1-qnx710-aarch64le
 _CFG_qnx700_inst_dir=~/qnx/qnx700/
 _CFG_qnx710_inst_dir=~/qnx/qnx710/
-# _CFG_tmp_dir=~/ortq7/
-_CFG_tmp_dir=~/rtoq71/
+_CFG_tmp_dir=~/ort_qnx/
 
 ###############################################################################
 #   internal configs (do not touch)
@@ -366,7 +365,7 @@ function _apply_patches_onnxruntime() {
     OK__ "[onnxruntime] applied patches"
 }
 
-function _build_onnxruntime_qnx700() {
+function _build_onnxruntime_1_8_2_qnx700() {
     INFO__ "[onnxruntime] assuming onnxruntime source is at $_CFG_tmp_dir/onnxruntime"
     cd $_CFG_tmp_dir/onnxruntime
     if [ $? -ne 0 ]; then
@@ -397,7 +396,7 @@ function _build_onnxruntime_qnx700() {
     OK__ "[onnxruntime] build complete"
 }
 
-function _build_onnxruntime_qnx710() {
+function _build_onnxruntime_1_14_1_qnx710() {
     INFO__ "[onnxruntime] assuming onnxruntime source is at $_CFG_tmp_dir/onnxruntime"
     cd $_CFG_tmp_dir/onnxruntime
     if [ $? -ne 0 ]; then
@@ -469,7 +468,7 @@ function _check_dep() {
     return
 }
 
-function _build_for_qnx700_aarch64le() {
+function _build_for_1_8_2_qnx700_aarch64le() {
     source $_CFG_qnx700_inst_dir/qnxsdp-env.sh
     if [ $? -ne 0 ]; then
         ERROR__ "cannot setup qnx700-nto toolchain"
@@ -486,10 +485,10 @@ function _build_for_qnx700_aarch64le() {
     _apply_patches_onnxruntime $_CFG_patches_dir/onnxruntime_1.8.2_patch $_CFG_tmp_dir/onnxruntime
     _build_boost_1_71_0_qnx700
     _setup_protoc 3.16.0
-    _build_onnxruntime_qnx700
+    _build_onnxruntime_1_8_2_qnx700
 }
 
-function _build_for_qnx710_aarch64le() {
+function _build_for_1_14_1_qnx710_aarch64le() {
     source $_CFG_qnx710_inst_dir/qnxsdp-env.sh
     if [ $? -ne 0 ]; then
         ERROR__ "cannot setup qnx710-nto toolchain"
@@ -507,7 +506,7 @@ function _build_for_qnx710_aarch64le() {
     _apply_patches_onnxruntime $_CFG_patches_dir/onnxruntime_1.14.1_patch $_CFG_tmp_dir/onnxruntime
     _build_boost_1_80_0_qnx710
     _setup_protoc 3.20.3
-    _build_onnxruntime_qnx710
+    _build_onnxruntime_1_14_1_qnx710
 }
 
 function _main() {
@@ -517,10 +516,10 @@ function _main() {
         exit 1
     fi
 
-    if [ "$_CFG_build_target" == "qnx700-aarch64le" ]; then
-        _build_for_qnx700_aarch64le
-    elif [ "$_CFG_build_target" == "qnx710-aarch64le" ]; then
-        _build_for_qnx710_aarch64le
+    if [ "$_CFG_build_target" == "1.8.2-qnx700-aarch64le" ]; then
+        _build_for_1_8_2_qnx700_aarch64le
+    elif [ "$_CFG_build_target" == "1.14.1-qnx710-aarch64le" ]; then
+        _build_for_1_14_1_qnx710_aarch64le
     else
         ERROR__ "unsupported build target: $_CFG_build_target"
         exit 1
