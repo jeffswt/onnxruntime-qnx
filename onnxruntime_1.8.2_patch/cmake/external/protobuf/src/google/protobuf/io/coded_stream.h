@@ -14,8 +14,8 @@ index b6c11d27a..462d5fd0f 100644
 -    !defined(PROTOBUF_DISABLE_LITTLE_ENDIAN_OPT_FOR_TEST)
 -#define PROTOBUF_LITTLE_ENDIAN 1
  #endif
-+// #if ((defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)) ||    
-+//      (defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN)) && 
++// #if ((defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)) ||
++//      (defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN)) &&
 +//     !defined(PROTOBUF_DISABLE_LITTLE_ENDIAN_OPT_FOR_TEST)
 +#define PROTOBUF_LITTLE_ENDIAN 1
 +// #endif
