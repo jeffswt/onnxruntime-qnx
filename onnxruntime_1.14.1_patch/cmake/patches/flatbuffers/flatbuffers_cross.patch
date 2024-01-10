@@ -1,0 +1,20 @@
+diff --git a/cmake/patches/flatbuffers/flatbuffers_cross.patch b/cmake/patches/flatbuffers/flatbuffers_cross.patch
+index 0000000..fffffff 100644
+--- a/cmake/patches/flatbuffers/flatbuffers_cross.patch
++++ b/cmake/patches/flatbuffers/flatbuffers_cross.patch
+@@ -0,0 +0,15 @@
++diff --git a/src/util.cpp b/src/util.cpp
++index 0000000..fffffff 100644
++--- a/src/util.cpp
+++++ b/src/util.cpp
++@@ -196,6 +196,9 @@
++       char abs_path[MAX_PATH];
++       return GetFullPathNameA(filepath.c_str(), MAX_PATH, abs_path, nullptr)
++     #else
+++      #if !defined(PATH_MAX)
+++      #define PATH_MAX 4096
+++      #endif
++       char abs_path[PATH_MAX];
++       return realpath(filepath.c_str(), abs_path)
++     #endif
++
