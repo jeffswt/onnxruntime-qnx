@@ -39,5 +39,5 @@ set ( CMAKE_BUILD_TYPE Release )  # or MinSizeRel
 set ( onnxruntime_BUILD_SHARED_LIB ON )
 set ( onnxruntime_CROSS_COMPILING ON )
 set ( onnxruntime_GCC_STATIC_CPP_RUNTIME OFF )
-set ( ONNX_CUSTOM_PROTOC_EXECUTABLE ${QNX_HOST}/usr/bin/protoc )
+set ( ONNX_CUSTOM_PROTOC_EXECUTABLE /usr/bin/protoc )
 set ( protobuf_WITH_ZLIB OFF )
