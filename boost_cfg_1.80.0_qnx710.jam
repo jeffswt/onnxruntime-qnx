@@ -1,0 +1,43 @@
+import os ;
+
+QNX_TARGET_ARCH = [ os.environ QNX_TARGET_ARCH ] ;
+QNX_TARGET = [ os.environ QNX_TARGET ] ;
+QNX_HOST = [ os.environ QNX_HOST ] ;
+
+if $(QNX_TARGET_ARCH) = amd64 {
+    qccVersion = "gcc_ntox86_64_gpp" ;
+    qnxTargetDir = "x86_64" ;
+    compilerArchFlags = "-m64 -fPIC" ;
+    linkerArchFlags = "-fPIC" ;
+} else if $(QNX_TARGET_ARCH) = armv7 {
+    qccVersion = "gcc_ntoarmv7le_gpp" ;
+    qnxTargetDir = "armle-v7" ;
+    compilerArchFlags = "" ;
+    linkerArchFlags = "" ;
+} else if $(QNX_TARGET_ARCH) = aarch64 {
+    qccVersion = "gcc_ntoaarch64le_gpp" ;
+    qnxTargetDir = "aarch64le" ;
+    compilerArchFlags = "-fPIC" ;
+    linkerArchFlags = "-fPIC" ;
+} else {
+    ECHO error\: Invalid target architecture $(QNX_TARGET_ARCH). ;
+    EXIT ;
+}
+
+using qcc
+# allow any qcc version (default 8.3.0)
+    :
+# command-line
+    : $(QNX_HOST)/usr/bin/qcc -V$(qccVersion)
+# compiler options
+# must have -V overwrite the default that's without the `_gpp` suffix
+# otherwise libstdc++ will be linked to `_ZNSt3__112` instead of `_ZNSt7__cxx1112` (`std::__cxx11`)
+    :   <compileflags>"-D__QNX__"
+        <compileflags>"-D__QNXNTO__"
+        <compileflags>"$(compilerArchFlags)"
+        <compileflags>"-std=gnu++17"
+        <compileflags>"-V$(qccVersion)"
+        <linkflags>"-V$(qccVersion)"
+        <linkflags>"-L$(QNX_TARGET)/$(qnxTargetDir)/usr/lib -L$(QNX_TARGET)/$(qnxTargetDir)/lib"
+        <linkflags>"$(linkerArchFlags)"
+    ;
