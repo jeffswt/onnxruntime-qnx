@@ -2,7 +2,7 @@ diff --git a/cmake/patches/protobuf/protobuf_cmake.patch b/cmake/patches/protobu
 index 0b88871..a1eb212 100644
 --- a/cmake/patches/protobuf/protobuf_cmake.patch
 +++ b/cmake/patches/protobuf/protobuf_cmake.patch
-@@ -29,3 +29,169 @@ index ac92442a1..e930cbd2e 100644
+@@ -29,3 +29,168 @@ index ac92442a1..e930cbd2e 100644
   endif (MSVC)
   
   
@@ -17,7 +17,7 @@ index 0b88871..a1eb212 100644
 +-  set(CMAKE_CXX_EXTENSIONS OFF)
 ++  set(CMAKE_CXX_EXTENSIONS ON)
 + endif()
-+ 
++
 + # The Intel compiler isn't able to deal with noinline member functions of
 +@@ -185,7 +185,7 @@ set(protobuf_LINK_LIBATOMIC false)
 + if (NOT MSVC)
@@ -38,7 +38,7 @@ index 0b88871..a1eb212 100644
 +   # end users who don't want these checks, so add -DNDEBUG by default.
 +-  CXXFLAGS="$CXXFLAGS -std=c++11 -DNDEBUG"
 ++  CXXFLAGS="$CXXFLAGS -std=gnu++11 -DNDEBUG"
-+ 
++
 +   AC_MSG_RESULT([use default: $PROTOBUF_OPT_FLAG $CXXFLAGS])
 + ],[
 +diff --git a/conformance/Makefile.am b/conformance/Makefile.am
@@ -60,11 +60,11 @@ index 0b88871..a1eb212 100644
 ++++ b/kokoro/release/protoc/macos/build.sh
 +@@ -1,7 +1,7 @@
 + #!/bin/bash
-+ 
++
 + set -ex
 +-CXXFLAGS_COMMON="-std=c++14 -DNDEBUG -mmacosx-version-min=10.9"
 ++CXXFLAGS_COMMON="-std=gnu++14 -DNDEBUG -mmacosx-version-min=10.9"
-+ 
++
 + cd github/protobuf
 + ./autogen.sh
 +diff --git a/kokoro/release/python/macos/config.sh b/kokoro/release/python/macos/config.sh
@@ -74,11 +74,11 @@ index 0b88871..a1eb212 100644
 +@@ -29,7 +29,7 @@ function pre_build {
 +     ./autogen.sh
 +     ./configure
-+ 
++
 +-    CXXFLAGS="-std=c++14 -fPIC -g -O2" ./configure
 ++    CXXFLAGS="-std=gnu++14 -fPIC -g -O2" ./configure
 +     make -j8
-+ 
++
 +     # Generate python dependencies.
 +diff --git a/m4/ax_cxx_compile_stdcxx.m4 b/m4/ax_cxx_compile_stdcxx.m4
 +index d3288e2..b178e5c 100644
@@ -94,7 +94,7 @@ index 0b88871..a1eb212 100644
 + #
 + #   The third argument, if specified 'mandatory' or if left unspecified,
 +@@ -96,9 +96,9 @@ AC_DEFUN([AX_CXX_COMPILE_STDCXX], [dnl
-+ 
++
 +   m4_if([$2], [ext], [], [dnl
 +   if test x$ac_success = xno; then
 +-    dnl HP's aCC needs +std=c++11 according to:
@@ -115,7 +115,7 @@ index 0b88871..a1eb212 100644
 +       extra_compile_args.append('-Wno-unused-variable')
 +-      extra_compile_args.append('-std=c++11')
 ++      extra_compile_args.append('-std=gnu++11')
-+ 
++
 +     if sys.platform == 'darwin':
 +       extra_compile_args.append('-Wno-shorten-64-to-32')
 +diff --git a/tests.sh b/tests.sh
@@ -124,7 +124,7 @@ index 0b88871..a1eb212 100644
 ++++ b/tests.sh
 +@@ -18,7 +18,7 @@ internal_build_cpp() {
 +   git submodule update --init --recursive
-+ 
++
 +   ./autogen.sh
 +-  ./configure CXXFLAGS="-fPIC -std=c++11"  # -fPIC is needed for python cpp test.
 ++  ./configure CXXFLAGS="-fPIC -std=gnu++11"  # -fPIC is needed for python cpp test.
@@ -171,4 +171,3 @@ index 0b88871..a1eb212 100644
 +      (defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN)) && \
 +     !defined(PROTOBUF_DISABLE_LITTLE_ENDIAN_OPT_FOR_TEST)
 + #define PROTOBUF_LITTLE_ENDIAN 1
-+

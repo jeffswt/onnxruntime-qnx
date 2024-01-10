@@ -1,8 +1,9 @@
 diff --git a/cmake/patches/flatbuffers/flatbuffers_cross.patch b/cmake/patches/flatbuffers/flatbuffers_cross.patch
-index 0000000..fffffff 100644
---- a/cmake/patches/flatbuffers/flatbuffers_cross.patch
+new file mode 100644
+index 0000000..8abab4f
+--- /dev/null
 +++ b/cmake/patches/flatbuffers/flatbuffers_cross.patch
-@@ -0,0 +0,15 @@
+@@ -0,0 +1,14 @@
 +diff --git a/src/util.cpp b/src/util.cpp
 +index 0000000..fffffff 100644
 +--- a/src/util.cpp
@@ -17,4 +18,3 @@ index 0000000..fffffff 100644
 +       char abs_path[PATH_MAX];
 +       return realpath(filepath.c_str(), abs_path)
 +     #endif
-+
