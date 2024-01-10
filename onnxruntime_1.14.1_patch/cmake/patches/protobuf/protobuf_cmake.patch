@@ -1,0 +1,174 @@
+diff --git a/cmake/patches/protobuf/protobuf_cmake.patch b/cmake/patches/protobuf/protobuf_cmake.patch
+index 0b88871..a1eb212 100644
+--- a/cmake/patches/protobuf/protobuf_cmake.patch
++++ b/cmake/patches/protobuf/protobuf_cmake.patch
+@@ -29,3 +29,169 @@ index ac92442a1..e930cbd2e 100644
+  endif (MSVC)
+  
+  
++diff --git a/cmake/CMakeLists.txt b/cmake/CMakeLists.txt
++index ac92442..9ec0d2a 100644
++--- a/cmake/CMakeLists.txt
+++++ b/cmake/CMakeLists.txt
++@@ -29,7 +29,7 @@ if (CYGWIN)
++ else()
++   set(CMAKE_CXX_STANDARD 11)
++   set(CMAKE_CXX_STANDARD_REQUIRED ON)
++-  set(CMAKE_CXX_EXTENSIONS OFF)
+++  set(CMAKE_CXX_EXTENSIONS ON)
++ endif()
++ 
++ # The Intel compiler isn't able to deal with noinline member functions of
++@@ -185,7 +185,7 @@ set(protobuf_LINK_LIBATOMIC false)
++ if (NOT MSVC)
++   include(CheckCXXSourceCompiles)
++   set(OLD_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
++-  set(CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} -std=c++11)
+++  set(CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} -std=gnu++11)
++   check_cxx_source_compiles("
++     #include <atomic>
++     int main() {
++diff --git a/configure.ac b/configure.ac
++index d9b9de3..faa146e 100644
++--- a/configure.ac
+++++ b/configure.ac
++@@ -93,7 +93,7 @@ AS_IF([test "x${ac_cv_env_CXXFLAGS_set}" = "x"],[
++   # Protocol Buffers contains several checks that are intended to be used only
++   # for debugging and which might hurt performance.  Most users are probably
++   # end users who don't want these checks, so add -DNDEBUG by default.
++-  CXXFLAGS="$CXXFLAGS -std=c++11 -DNDEBUG"
+++  CXXFLAGS="$CXXFLAGS -std=gnu++11 -DNDEBUG"
++ 
++   AC_MSG_RESULT([use default: $PROTOBUF_OPT_FLAG $CXXFLAGS])
++ ],[
++diff --git a/conformance/Makefile.am b/conformance/Makefile.am
++index 940c0a2..2e8fd74 100644
++--- a/conformance/Makefile.am
+++++ b/conformance/Makefile.am
++@@ -217,7 +217,7 @@ conformance_test_runner_SOURCES = conformance_test.h conformance_test.cc \
++                                   third_party/jsoncpp/jsoncpp.cpp
++ nodist_conformance_test_runner_SOURCES = conformance.pb.cc google/protobuf/test_messages_proto3.pb.cc google/protobuf/test_messages_proto2.pb.cc
++ conformance_test_runner_CPPFLAGS = -I$(top_srcdir)/src -I$(srcdir)
++-conformance_test_runner_CXXFLAGS = -std=c++11
+++conformance_test_runner_CXXFLAGS = -std=gnu++11
++ # Explicit deps because BUILT_SOURCES are only done before a "make all/check"
++ # so a direct "make test_cpp" could fail if parallel enough.
++ conformance_test_runner-conformance_test.$(OBJEXT): conformance.pb.h
++diff --git a/kokoro/release/protoc/macos/build.sh b/kokoro/release/protoc/macos/build.sh
++index 47c9bfa..bcb840b 100755
++--- a/kokoro/release/protoc/macos/build.sh
+++++ b/kokoro/release/protoc/macos/build.sh
++@@ -1,7 +1,7 @@
++ #!/bin/bash
++ 
++ set -ex
++-CXXFLAGS_COMMON="-std=c++14 -DNDEBUG -mmacosx-version-min=10.9"
+++CXXFLAGS_COMMON="-std=gnu++14 -DNDEBUG -mmacosx-version-min=10.9"
++ 
++ cd github/protobuf
++ ./autogen.sh
++diff --git a/kokoro/release/python/macos/config.sh b/kokoro/release/python/macos/config.sh
++index 1b0a302..817b9f8 100644
++--- a/kokoro/release/python/macos/config.sh
+++++ b/kokoro/release/python/macos/config.sh
++@@ -29,7 +29,7 @@ function pre_build {
++     ./autogen.sh
++     ./configure
++ 
++-    CXXFLAGS="-std=c++14 -fPIC -g -O2" ./configure
+++    CXXFLAGS="-std=gnu++14 -fPIC -g -O2" ./configure
++     make -j8
++ 
++     # Generate python dependencies.
++diff --git a/m4/ax_cxx_compile_stdcxx.m4 b/m4/ax_cxx_compile_stdcxx.m4
++index d3288e2..b178e5c 100644
++--- a/m4/ax_cxx_compile_stdcxx.m4
+++++ b/m4/ax_cxx_compile_stdcxx.m4
++@@ -15,7 +15,7 @@
++ #
++ #   The second argument, if specified, indicates whether you insist on an
++ #   extended mode (e.g. -std=gnu++11) or a strict conformance mode (e.g.
++-#   -std=c++11).  If neither is specified, you get whatever works, with
+++#   -std=gnu++11).  If neither is specified, you get whatever works, with
++ #   preference for an extended mode.
++ #
++ #   The third argument, if specified 'mandatory' or if left unspecified,
++@@ -96,9 +96,9 @@ AC_DEFUN([AX_CXX_COMPILE_STDCXX], [dnl
++ 
++   m4_if([$2], [ext], [], [dnl
++   if test x$ac_success = xno; then
++-    dnl HP's aCC needs +std=c++11 according to:
+++    dnl HP's aCC needs +std=gnu++11 according to:
++     dnl http://h21007.www2.hp.com/portal/download/files/unprot/aCxx/PDF_Release_Notes/769149-001.pdf
++-    dnl Cray's crayCC needs "-h std=c++11"
+++    dnl Cray's crayCC needs "-h std=gnu++11"
++     for alternative in ${ax_cxx_compile_alternatives}; do
++       for switch in -std=c++${alternative} +std=c++${alternative} "-h std=c++${alternative}"; do
++         cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
++diff --git a/python/setup.py b/python/setup.py
++index 1274761..f0aee92 100755
++--- a/python/setup.py
+++++ b/python/setup.py
++@@ -256,7 +256,7 @@ if __name__ == '__main__':
++       extra_compile_args.append('-Wno-invalid-offsetof')
++       extra_compile_args.append('-Wno-sign-compare')
++       extra_compile_args.append('-Wno-unused-variable')
++-      extra_compile_args.append('-std=c++11')
+++      extra_compile_args.append('-std=gnu++11')
++ 
++     if sys.platform == 'darwin':
++       extra_compile_args.append('-Wno-shorten-64-to-32')
++diff --git a/tests.sh b/tests.sh
++index 09865fa..9ec09ee 100755
++--- a/tests.sh
+++++ b/tests.sh
++@@ -18,7 +18,7 @@ internal_build_cpp() {
++   git submodule update --init --recursive
++ 
++   ./autogen.sh
++-  ./configure CXXFLAGS="-fPIC -std=c++11"  # -fPIC is needed for python cpp test.
+++  ./configure CXXFLAGS="-fPIC -std=gnu++11"  # -fPIC is needed for python cpp test.
++                                            # See python/setup.py for more details
++   make -j$(nproc)
++ }
++diff --git a/src/google/protobuf/stubs/port.h b/src/google/protobuf/stubs/port.h
++index 0000000..fffffff 100644
++--- a/src/google/protobuf/stubs/port.h
+++++ b/src/google/protobuf/stubs/port.h
++@@ -65,12 +65,13 @@
++ #include <sys/isa_defs.h>  // __BYTE_ORDER
++ #elif defined(_AIX) || defined(__TOS_AIX__)
++ #include <sys/machine.h>  // BYTE_ORDER
+++#elif defined(__QNX__)
+++#include <gulliver.h>
++ #else
++-#if !defined(__QNX__)
++ #include <endian.h>  // __BYTE_ORDER
++ #endif
++-#endif
++ #if ((defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)) ||   \
+++     (defined(__LITTLEENDIAN__) && !defined(__BIGENDIAN__)) ||     \
++      (defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN) || \
++      (defined(BYTE_ORDER) && BYTE_ORDER == LITTLE_ENDIAN)) &&      \
++     !defined(PROTOBUF_DISABLE_LITTLE_ENDIAN_OPT_FOR_TEST)
++diff --git a/src/google/protobuf/io/coded_stream.h b/src/google/protobuf/io/coded_stream.h
++index 0000000..fffffff 100644
++--- a/src/google/protobuf/io/coded_stream.h
+++++ b/src/google/protobuf/io/coded_stream.h
++@@ -140,12 +140,13 @@
++ #include <sys/isa_defs.h>  // __BYTE_ORDER
++ #elif defined(_AIX) || defined(__TOS_AIX__)
++ #include <sys/machine.h>  // BYTE_ORDER
+++#elif defined(__QNX__)
+++#include <gulliver.h>
++ #else
++-#if !defined(__QNX__)
++ #include <endian.h>  // __BYTE_ORDER
++ #endif
++-#endif
++ #if ((defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)) ||    \
+++     (defined(__LITTLEENDIAN__) && !defined(__BIGENDIAN__)) ||     \
++      (defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN)) && \
++     !defined(PROTOBUF_DISABLE_LITTLE_ENDIAN_OPT_FOR_TEST)
++ #define PROTOBUF_LITTLE_ENDIAN 1
++
